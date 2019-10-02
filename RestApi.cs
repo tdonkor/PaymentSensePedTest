@@ -11,7 +11,7 @@ namespace PaymentSensePedTest
 {
     public class RestApi
     {
-        private string testAccountUrl;
+    
         private string username;
         private string password;
 
