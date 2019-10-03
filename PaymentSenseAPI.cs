@@ -8,40 +8,29 @@ namespace PaymentSensePedTest
 {
     public class PaymentSenseAPI : IDisposable
     {
-        private string availableURL;
-        private string testAccountUrl;
-        private string transactionUrl;
-        private string username;
-        private string password;
+       // private string userAccountURL = "https://st185l090000.test.connect.paymentsense.cloud";
 
         RestApi restApi = new RestApi();
+        AppConfiguration configFile = AppConfiguration.Instance;
 
         public void Dispose()
         {
           
         }
 
-        //public void Authorisation()
+        //public string CheckTerminalAvailability()
         //{
-        //    testAccountUrl = "https://st185l090000.test.connect.paymentsense.cloud";
-        //    username = "acrelec";
-        //    password = "8ffb32c4-8b29-428d-b5e8-896f7ca7890d";
 
-        //    restApi.Authenticate(username, password, testAccountUrl);
+        //    // deserialise returned data
+        //    return restApi.GetTIDAvailability(configFile.UserAccountUrl);
         //}
 
-        public string CheckTerminalAvailability()
+        public string Transaction(int value)
         {
-
-            availableURL = "https://st185l090000.test.connect.paymentsense.cloud/pac/terminals";
-            return restApi.GetRequest(availableURL);
-
+           
+            return restApi.PostSaleTransaction(configFile.UserAccountUrl, value);
         }
-
-        //public string Transaction()
-        //{
-        //    transactionUrl = "https://st185l090000.test.connect.paymentsense.cloud/pac/terminals/22163665/transactions";
-        //    return restApi.PostRequest(transactionUrl);
-        //}
     }
+
+   
 }

@@ -12,19 +12,38 @@ namespace PaymentSensePedTest
 
         static void Main(string[] args)
         {
+     
+
+            Console.WriteLine("\n\tPaymentSense Payment Simulator");
+            Console.WriteLine("\t_______________________________\n");
+            int amount = 0;
 
             using (var payment = new PaymentSenseAPI())
             {
-                // get Authentication
-               // payment.Authorisation();
+                try
+                {
+                    Console.Write("Enter the Amount(no decimal point allowed): ");
+                    amount = int.Parse(Console.ReadLine());
 
-                //check availablity
-               Console.WriteLine(payment.CheckTerminalAvailability());
+                    //check value
+                    amount = Utils.GetNumericAmountValue(amount);
 
-               // Console.WriteLine(payment.Transaction());
+                    Console.WriteLine($"Payment amount is {amount}");
+
+                    //check PED availability
+                   // Console.WriteLine(payment.CheckTerminalAvailability());
+
+                    //execute the transaction 
+                    Console.WriteLine(payment.Transaction(amount));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error " + ex.Message);
+                }
+               
             }
-            Console.WriteLine("Press any key to exit...");
 
+            Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
     }
