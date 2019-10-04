@@ -50,8 +50,8 @@ namespace PaymentSensePedTest
         //    Console.WriteLine($" Merchant Number: {ticket.MerchantNo}");
         //    Console.WriteLine($" Response Code: {ticket.ResponseCode}");
         //    Console.WriteLine($" Scheme Number.: {ticket.SchemeName}");
-        //    Console.WriteLine($" Transaction Amount: {ticket.TransactionAmount}");
-        //    Console.WriteLine($" Transaction Ref Number: {ticket.TransactionRefNo.ToString()}");
+        //    Console.WriteLine($" GetValue Amount: {ticket.TransactionAmount}");
+        //    Console.WriteLine($" GetValue Ref Number: {ticket.TransactionRefNo.ToString()}");
         //    Console.WriteLine($" TerminalId: {ticket.TerminalId}");
 
         //    ticketStr = ticket.CustomerReceipt;

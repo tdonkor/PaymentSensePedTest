@@ -18,14 +18,8 @@ namespace PaymentSensePedTest
           
         }
 
-        //public string CheckTerminalAvailability()
-        //{
 
-        //    // deserialise returned data
-        //    return restApi.GetTIDAvailability(configFile.UserAccountUrl);
-        //}
-
-        public string Transaction(int value)
+        public string GetValue(int value)
         {
            
             return restApi.PostSaleTransaction(configFile.UserAccountUrl, value);

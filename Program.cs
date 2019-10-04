@@ -30,11 +30,9 @@ namespace PaymentSensePedTest
 
                     Console.WriteLine($"Payment amount is {amount}");
 
-                    //check PED availability
-                   // Console.WriteLine(payment.CheckTerminalAvailability());
 
                     //execute the transaction 
-                    Console.WriteLine(payment.Transaction(amount));
+                    Console.WriteLine(payment.GetValue(amount));
                 }
                 catch (Exception ex)
                 {
