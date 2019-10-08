@@ -12,34 +12,48 @@ namespace PaymentSensePedTest
 
         static void Main(string[] args)
         {
-     
 
-            Console.WriteLine("\n\tPaymentSense Payment Simulator");
-            Console.WriteLine("\t_______________________________\n");
-            int amount = 0;
-
-            using (var payment = new PaymentSenseAPI())
+            string answer = "Y";
+            do
             {
-                try
+                Console.Clear();
+
+                Console.WriteLine("\n\tPaymentSense Payment Simulator");
+                Console.WriteLine("\t_______________________________\n");
+                int amount = 0;
+
+                using (var payment = new PaymentSenseRestApi())
                 {
-                    Console.Write("Enter the Amount(no decimal point allowed): ");
-                    amount = int.Parse(Console.ReadLine());
+                    try
+                    {
+                        Console.Write("Enter the Amount(no decimal point allowed): ");
+                        amount = int.Parse(Console.ReadLine());
 
-                    //check value
-                    amount = Utils.GetNumericAmountValue(amount);
-
-                    Console.WriteLine($"Payment amount is {amount}");
+                        Console.Clear();
 
 
-                    //execute the transaction 
-                    Console.WriteLine(payment.GetValue(amount));
+                        //check value
+                        amount = Utils.GetNumericAmountValue(amount);
+
+                        if (amount == 0)
+                        {
+                            throw new Exception("Payment amount value error...");
+                        }
+
+                        Console.WriteLine($"\nPayment amount £{amount/100.0} is valid");
+
+                        //execute the transaction 
+                        Console.WriteLine("Payment is : " + payment.PostSaleTransaction(amount));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
+                    Console.Write("\n\nWould you like to add another payment? (Y/N): ");
+                    answer = Console.ReadLine().ToUpper();
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error " + ex.Message);
-                }
-               
-            }
+            } while (answer == "Y");
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();

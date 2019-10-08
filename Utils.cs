@@ -25,8 +25,9 @@ namespace PaymentSensePedTest
 
             if (amount <= 0)
             {
-               
-                throw new Exception("Invalid pay amount");
+
+                Console.WriteLine("Invalid pay amount");
+                amount = 0;
             }
 
             return amount;

@@ -18,14 +18,17 @@ namespace PaymentSensePedTest
         public string DateOfExpiry { get; set; }
         public string DateOfStart { get; set; }
         public string PaymentMethod { get; set; }
+        public IList<string> Notifications { get; set; }
         public string PrimaryAccountNumber { get; set; }
         public string PrimaryAccountNumberSequence { get; set; }
         public string TransactionId { get; set; }
         public string TransactionNumber { get; set; }
         public string TransactionResult { get; set; }
-        public string UserMessage { get; set; }
+        public string UserMessage { get; set; } = " PLEASE RETAIN RECEIPT. \nThank you.";
         public string TransactionTime { get; set; }
         public string TransactionType { get; set; }
-    
+        public object ReceiptLines { get; set; }
+
+
     }
 }
