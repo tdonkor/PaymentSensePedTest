@@ -16,6 +16,10 @@ namespace PaymentSensePedTest
         private string url;
         private string tid;
         private string currency;
+        private string installerId;
+        private string softwareHouseId;
+        private string mediaType;
+       
 
         AppConfiguration configFile;
 
@@ -28,6 +32,9 @@ namespace PaymentSensePedTest
             url = configFile.UserAccountUrl;
             tid = configFile.Tid;
             currency = configFile.Currency;
+            installerId = configFile.InstallerId;
+            softwareHouseId = configFile.SoftwareHouseId;
+            mediaType = configFile.MediaType;
         }
 
 
@@ -46,7 +53,9 @@ namespace PaymentSensePedTest
 
             var request = new RestRequest(Method.POST);
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", "*/*");
+            request.AddHeader("Accept", mediaType);
+            request.AddHeader("Software-House-Id", softwareHouseId);
+            request.AddHeader("Installer-Id", installerId);
             request.AddHeader("Connection", "keep-alive");
             request.AddParameter("undefined", "{\r\n  \"transactionType\": \"SALE\",\r\n  \"amount\": " + value + ",\r\n  \"currency\": \"" + currency + "\"\r\n}", ParameterType.RequestBody);
 
@@ -70,13 +79,8 @@ namespace PaymentSensePedTest
                     response = GetTransactionData(requestId, url);
                     // Console.WriteLine(response.Content + "\n\n");
                     // Console.Write(" " + i++);
-                    transactionDetails = JsonConvert.DeserializeObject<TransactionDetails>(response.Content);
+                    
 
-                    //// Check notification for 
-                    //for(int i = 0; i < transactionDetails.Notifications[i].Length; i++)
-                    //{
-                    //    if transactionDetails.Notifications[i]
-                    //}
 
                     if ((response.Content.Contains("SIGNATURE_VERIFICATION")) && (signatureRequired == false))
                     {
@@ -117,7 +121,9 @@ namespace PaymentSensePedTest
             RestClient client = Authenticate(url+ "/pac/terminals/" + tid + "/transactions/" + requestId);
             var request = new RestRequest(Method.GET);
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", "*/*");
+            request.AddHeader("Accept", mediaType);
+            request.AddHeader("Software-House-Id", softwareHouseId);
+            request.AddHeader("Installer-Id", installerId);
             request.AddHeader("Connection", "keep-alive");
 
             IRestResponse response = client.Execute(request);
@@ -137,7 +143,9 @@ namespace PaymentSensePedTest
             RestClient client = Authenticate(url + "/pac/terminals/" + tid + "/transactions/" + requestId + "/signature");
             var request = new RestRequest(Method.PUT);
             request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", "*/*");
+            request.AddHeader("Accept", mediaType);
+            request.AddHeader("Software-House-Id", softwareHouseId);
+            request.AddHeader("Installer-Id", installerId);
             request.AddHeader("Connection", "keep-alive");
             request.AddParameter("undefined", "{\r\n  \"accepted\": false\r\n}", ParameterType.RequestBody);
 
