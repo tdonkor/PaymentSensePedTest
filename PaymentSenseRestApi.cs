@@ -20,10 +20,12 @@ namespace PaymentSensePedTest
         private string softwareHouseId;
         private string mediaType;
        
-
         AppConfiguration configFile;
 
 
+        /// <summary>
+        /// Initialise all the config file details
+        /// </summary>
         public PaymentSenseRestApi()
         {
             configFile = AppConfiguration.Instance;
@@ -52,35 +54,25 @@ namespace PaymentSensePedTest
             TransactionDetails transactionDetails;
 
             var request = new RestRequest(Method.POST);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", mediaType);
-            request.AddHeader("Software-House-Id", softwareHouseId);
-            request.AddHeader("Installer-Id", installerId);
-            request.AddHeader("Connection", "keep-alive");
-            request.AddParameter("undefined", "{\r\n  \"transactionType\": \"SALE\",\r\n  \"amount\": " + value + ",\r\n  \"currency\": \"" + currency + "\"\r\n}", ParameterType.RequestBody);
+            request = RequestParams(request);
+            request.AddParameter("Sale", "{\r\n  \"transactionType\": \"SALE\",\r\n  \"amount\": " + value + ",\r\n  \"currency\": \"" + currency + "\"\r\n}", ParameterType.RequestBody);
 
             IRestResponse response = client.Execute(request);
 
             //check reponse isSuccessful
-            if(response.IsSuccessful)
+            if (response.IsSuccessful)
             {
                 //deserialise response
                 TransactionResp tranResponse = JsonConvert.DeserializeObject<TransactionResp>(response.Content);
                 requestId = tranResponse.RequestId;
 
-
-                 Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 //poll for result every 1 seconds block until finish
-                //int i = 0;
 
                 while (true)
                 {
                     Thread.Sleep(1000);
                     response = GetTransactionData(requestId, url);
-                    // Console.WriteLine(response.Content + "\n\n");
-                    // Console.Write(" " + i++);
-                    
-
 
                     if ((response.Content.Contains("SIGNATURE_VERIFICATION")) && (signatureRequired == false))
                     {
@@ -91,22 +83,16 @@ namespace PaymentSensePedTest
 
                     if (response.Content.Contains("TRANSACTION_FINISHED"))
                     {
-                         break;
-                    }                 
+                        break;
+                    }
                 }
-
             }
 
             //deserialise response
             transactionDetails = JsonConvert.DeserializeObject<TransactionDetails>(response.Content);
-
-            //var x = JsonConvert.SerializeObject(transactionDetails.ReceiptLines, Formatting.Indented);
-
             ReceiptDetails(transactionDetails);
 
             return transactionDetails.TransactionResult;
-
-            //return response.Content;
 
         }
 
@@ -120,15 +106,8 @@ namespace PaymentSensePedTest
 
             RestClient client = Authenticate(url+ "/pac/terminals/" + tid + "/transactions/" + requestId);
             var request = new RestRequest(Method.GET);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", mediaType);
-            request.AddHeader("Software-House-Id", softwareHouseId);
-            request.AddHeader("Installer-Id", installerId);
-            request.AddHeader("Connection", "keep-alive");
-
-            IRestResponse response = client.Execute(request);
-
-              
+            request = RequestParams(request);
+            IRestResponse response = client.Execute(request); 
             return response;
         }
 
@@ -142,32 +121,30 @@ namespace PaymentSensePedTest
         {
             RestClient client = Authenticate(url + "/pac/terminals/" + tid + "/transactions/" + requestId + "/signature");
             var request = new RestRequest(Method.PUT);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", mediaType);
-            request.AddHeader("Software-House-Id", softwareHouseId);
-            request.AddHeader("Installer-Id", installerId);
-            request.AddHeader("Connection", "keep-alive");
-            request.AddParameter("undefined", "{\r\n  \"accepted\": false\r\n}", ParameterType.RequestBody);
+            request = RequestParams(request);
+            request.AddParameter("Signature", "{\r\n  \"accepted\": false\r\n}", ParameterType.RequestBody);
 
             IRestResponse response = client.Execute(request);
 
             return response;
         }
 
+        /// <summary>
+        /// The Request Parameters for the REST API calls 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private RestRequest RequestParams(RestRequest request)
+        {
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Accept", mediaType);
+            request.AddHeader("Software-House-Id", softwareHouseId);
+            request.AddHeader("Installer-Id", installerId);
+            request.AddHeader("Connection", "keep-alive");
 
-    
+            return request;
+        }
 
-        //public IRestResponse DeleteRequest(string requestId, string url)
-        //{
-
-        //    RestClient client = Authenticate(url + "/pac/terminals/" + configFile.Tid + "/transactions/" + requestId);
-        //    var request = new RestRequest(Method.DELETE);
-        //    request.AddHeader("Content-Type", "application/json");
-        //    //request.AddHeader("Connection", "keep-alive");
-        //    IRestResponse response = client.Execute(request);
-
-        //    return response;
-        //}
 
         /// <summary>
         /// Get the transaction details and put them into an object 
@@ -198,8 +175,6 @@ namespace PaymentSensePedTest
             Console.WriteLine("UserMessage:" + transactionDetail.UserMessage);
             Console.ResetColor();
             Console.WriteLine("\n\n");
-
-
 
         }
 
