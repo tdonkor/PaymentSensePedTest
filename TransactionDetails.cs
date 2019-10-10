@@ -24,7 +24,7 @@ namespace PaymentSensePedTest
         public string TransactionId { get; set; }
         public string TransactionNumber { get; set; }
         public string TransactionResult { get; set; }
-        public string UserMessage { get; set; } = " PLEASE RETAIN RECEIPT. \nThank you.";
+        public string UserMessage { get; set; } = " PLEASE RETAIN RECEIPT. \n\nThank you.";
         public string TransactionTime { get; set; }
         public string TransactionType { get; set; }
         public object ReceiptLines { get; set; }

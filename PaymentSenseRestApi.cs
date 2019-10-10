@@ -42,9 +42,11 @@ namespace PaymentSensePedTest
 
             RestClient client = Authenticate(url + "/pac/terminals/" + tid + "/transactions");
             bool signatureRequired = false;
+            TransactionDetails transactionDetails;
 
             var request = new RestRequest(Method.POST);
             request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Accept", "*/*");
             request.AddHeader("Connection", "keep-alive");
             request.AddParameter("undefined", "{\r\n  \"transactionType\": \"SALE\",\r\n  \"amount\": " + value + ",\r\n  \"currency\": \"" + currency + "\"\r\n}", ParameterType.RequestBody);
 
@@ -57,6 +59,8 @@ namespace PaymentSensePedTest
                 TransactionResp tranResponse = JsonConvert.DeserializeObject<TransactionResp>(response.Content);
                 requestId = tranResponse.RequestId;
 
+
+                 Console.ForegroundColor = ConsoleColor.Cyan;
                 //poll for result every 1 seconds block until finish
                 //int i = 0;
 
@@ -66,11 +70,19 @@ namespace PaymentSensePedTest
                     response = GetTransactionData(requestId, url);
                     // Console.WriteLine(response.Content + "\n\n");
                     // Console.Write(" " + i++);
+                    transactionDetails = JsonConvert.DeserializeObject<TransactionDetails>(response.Content);
+
+                    //// Check notification for 
+                    //for(int i = 0; i < transactionDetails.Notifications[i].Length; i++)
+                    //{
+                    //    if transactionDetails.Notifications[i]
+                    //}
 
                     if ((response.Content.Contains("SIGNATURE_VERIFICATION")) && (signatureRequired == false))
                     {
                         signatureRequired = true;
                         response = SignaturePutRequest(requestId, url);
+                        Console.ForegroundColor = ConsoleColor.Red;
                     }
 
                     if (response.Content.Contains("TRANSACTION_FINISHED"))
@@ -82,9 +94,9 @@ namespace PaymentSensePedTest
             }
 
             //deserialise response
-            TransactionDetails transactionDetails = JsonConvert.DeserializeObject<TransactionDetails>(response.Content);
+            transactionDetails = JsonConvert.DeserializeObject<TransactionDetails>(response.Content);
 
-            var x = JsonConvert.SerializeObject(transactionDetails.ReceiptLines, Formatting.Indented);
+            //var x = JsonConvert.SerializeObject(transactionDetails.ReceiptLines, Formatting.Indented);
 
             ReceiptDetails(transactionDetails);
 
@@ -105,6 +117,7 @@ namespace PaymentSensePedTest
             RestClient client = Authenticate(url+ "/pac/terminals/" + tid + "/transactions/" + requestId);
             var request = new RestRequest(Method.GET);
             request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Accept", "*/*");
             request.AddHeader("Connection", "keep-alive");
 
             IRestResponse response = client.Execute(request);
@@ -124,6 +137,7 @@ namespace PaymentSensePedTest
             RestClient client = Authenticate(url + "/pac/terminals/" + tid + "/transactions/" + requestId + "/signature");
             var request = new RestRequest(Method.PUT);
             request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Accept", "*/*");
             request.AddHeader("Connection", "keep-alive");
             request.AddParameter("undefined", "{\r\n  \"accepted\": false\r\n}", ParameterType.RequestBody);
 
@@ -153,7 +167,8 @@ namespace PaymentSensePedTest
         /// <param name="transactionDetail"></param>
         public void ReceiptDetails(TransactionDetails transactionDetail)
         {
-            Console.WriteLine("\n\tReceipt");
+           
+            Console.WriteLine("\n\tRECEIPT");
             Console.WriteLine("\t==========\n");
             Console.WriteLine("Amount Total: " + transactionDetail.AmountTotal);
             Console.WriteLine("Application Id: " + transactionDetail.ApplicationId);
@@ -173,7 +188,7 @@ namespace PaymentSensePedTest
             Console.WriteLine("Transaction Time: " + transactionDetail.TransactionTime);
             Console.WriteLine("Transaction Type: " + transactionDetail.TransactionType);
             Console.WriteLine("UserMessage:" + transactionDetail.UserMessage);
-          
+            Console.ResetColor();
             Console.WriteLine("\n\n");
 
 

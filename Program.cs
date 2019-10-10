@@ -44,11 +44,14 @@ namespace PaymentSensePedTest
 
                         //execute the transaction 
                         Console.WriteLine("Payment is : " + payment.PostSaleTransaction(amount));
+                        Console.ResetColor();
 
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Error: " + ex.Message);
+                        Console.ResetColor();
                     }
                     Console.Write("\n\nWould you like to add another payment? (Y/N): ");
                     answer = Console.ReadLine().ToUpper();
